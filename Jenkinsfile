@@ -72,7 +72,7 @@ pipeline {
                     sleep 5
                     echo "Running Playwright tests..."
                     npx playwright install
-                    npx playwright test --reporter=html
+                    npx playwright test --reporter=html --output=playwright-report --config=playwright.config.js --trace=on
                 '''
             }
         }
