@@ -81,6 +81,7 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'build/**/*', fingerprint: true
             junit 'jest-results/**/*.xml'
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
         success {
             echo "Build and test completed successfully."
