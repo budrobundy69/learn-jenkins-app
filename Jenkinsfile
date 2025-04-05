@@ -9,8 +9,10 @@ pipeline {
                     reuseNode true
                 }
             }
+
             steps {
                 sh '''
+                echo "Building the project..."
                    ls -la
                    node --version
                    npm --version
@@ -28,15 +30,12 @@ pipeline {
                     reuseNode true
                 }
             }
+
             steps {
                 sh '''
-                   ls -la
-                   node --version
-                   npm --version
-
-                   test -f 'build/index.html'
-                   npm run test
-                   ls -la
+                    echo "Testing the project..."
+                    test -f 'build/index.html'
+                    npm test
                 '''
             }
         }
