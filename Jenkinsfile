@@ -34,7 +34,8 @@ pipeline {
                    node --version
                    npm --version
 
-                   npm test
+                   npm ci
+                   npm run test
                    ls -la
                 '''
             }
