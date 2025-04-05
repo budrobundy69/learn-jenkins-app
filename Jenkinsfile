@@ -36,6 +36,7 @@ pipeline {
 
                    npm ci
                    npm run test
+                   test -f 'index.html'
                    ls -la
                 '''
             }
