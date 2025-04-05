@@ -2,6 +2,33 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    echo "Checking out the repository..."
+                    checkout scm
+                }
+            }
+        }
+        stage('Install Dependencies') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+
+            steps {
+                sh '''
+                    echo "Installing dependencies..."
+                    node --version
+                    npm --version
+
+                    npm ci
+                '''
+            }
+        }
+
         stage('Build') {
             agent {
                 docker {
@@ -12,14 +39,12 @@ pipeline {
 
             steps {
                 sh '''
-                echo "Building the project..."
-                   ls -la
-                   node --version
-                   npm --version
+                    echo "Building the project..."
+                    node --version
+                    npm --version
 
-                   npm ci
-                   npm run build
-                   ls -la
+                    npm run build
+                    ls -la
                 '''
             }
         }
