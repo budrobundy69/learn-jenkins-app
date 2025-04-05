@@ -40,4 +40,17 @@ pipeline {
             }
         }
     }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'build/**/*', fingerprint: true
+            junit 'test-results/**/*.xml'
+        }
+        success {
+            echo "Build and test completed successfully."
+        }
+        failure {
+            echo "Build or test failed."
+        }
+    }
 }
