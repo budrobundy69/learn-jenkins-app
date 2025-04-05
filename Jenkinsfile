@@ -69,10 +69,9 @@ pipeline {
                     echo "Running E2E tests..."
                     npm install serve
                     node_modules/.bin/serve -s build &
-                    sleep 5
+                    sleep 10
                     echo "Running Playwright tests..."
-                    npx playwright install
-                    npx playwright test --reporter=html --output=playwright-report --config=playwright.config.js --trace=on
+                    npx playwright test
                 '''
             }
         }
