@@ -81,7 +81,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'build/**/*', fingerprint: true
-            junit 'test-results/**/*.xml'
+            junit 'jest-results/**/*.xml'
         }
         success {
             echo "Build and test completed successfully."
