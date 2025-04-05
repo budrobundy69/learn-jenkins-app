@@ -2,14 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                script {
-                    echo "Checking out the repository..."
-                    checkout scm
-                }
-            }
-        }
         stage('Install Dependencies') {
             agent {
                 docker {
@@ -61,6 +53,26 @@ pipeline {
                     echo "Testing the project..."
                     test -f 'build/index.html'
                     npm test
+                '''
+            }
+        }
+        stage('E2E Tests') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.51.1-noble'
+                    reuseNode true
+                }
+            }
+
+            steps {
+                sh '''
+                    echo "Running E2E tests..."
+                    npm install -g serve
+                    serve -s build
+                    sleep 5
+                    echo "Running Playwright tests..."
+                    npx playwright install
+                    npx playwright test
                 '''
             }
         }
