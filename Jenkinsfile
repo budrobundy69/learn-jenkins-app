@@ -71,6 +71,7 @@ pipeline {
                     node_modules/.bin/serve -s build &
                     sleep 5
                     echo "Running Playwright tests..."
+                    npx playwright install
                     npx playwright test --reporter=html
                 '''
             }
