@@ -49,13 +49,17 @@ pipeline {
                             reuseNode true
                         }
                     }
-
                     steps {
                         sh '''
                             echo "Testing the project..."
                             test -f 'build/index.html'
                             npm test
                         '''
+                    }
+                    post {
+                        always {
+                            junit 'jest-results/**/*.xml'
+                        }
                     }
                 }
                 stage('E2E Tests') {
@@ -65,7 +69,6 @@ pipeline {
                             reuseNode true
                         }
                     }
-
                     steps {
                         sh '''
                             echo "Running E2E tests..."
@@ -75,16 +78,19 @@ pipeline {
                             npx playwright test --reporter=html
                         '''
                     }
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                        }
+                    }
+
                 }
             }
         }
     }
-
     post {
         always {
             archiveArtifacts artifacts: 'build/**/*', fingerprint: true
-            junit 'jest-results/**/*.xml'
-            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
         success {
             echo "Build and test completed successfully."
