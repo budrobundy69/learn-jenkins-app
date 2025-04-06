@@ -4,6 +4,7 @@ pipeline {
     environment {
         NETLIFY_SITE_ID = '78a80345-6b9d-4448-bca2-77a96f1e1dfe'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        CI_ENVIRONMENT_URL =
     }
 
     stages {
@@ -76,7 +77,7 @@ pipeline {
                     }
                     steps {
                         sh '''
-                            echo "Running E2E tests..."
+                            echo "Running Local tests..."
                             npm install serve
                             node_modules/.bin/serve -s build &
                             sleep 10
@@ -85,7 +86,7 @@ pipeline {
                     }
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright Local Report', reportTitles: '', useWrapperFileDirectly: true])
                         }
                     }
 
@@ -112,11 +113,37 @@ pipeline {
             }
         }
 
+        stage('Prod E2E Tests') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.51.1-noble'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://adorable-ganache-bbe55d.netlify.app'
+            }
+
+            steps {
+                sh '''
+                    echo "Running E2E tests..."
+                    npx playwright test --reporter=html
+                '''
+            }
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright E2E Report', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
+
+        }
+
     }
     post {
-        always {
-            archiveArtifacts artifacts: 'build/**/*', fingerprint: true
-        }
+//         always {
+//             archiveArtifacts artifacts: 'build/**/*', fingerprint: true
+//         }
         success {
             echo "Build and test completed successfully."
         }
