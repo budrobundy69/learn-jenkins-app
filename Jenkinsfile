@@ -108,7 +108,7 @@ pipeline {
                 node_modules/.bin/netlify --version
                 echo "Deploying to Staging. Site ID: $NETLIFY_SITE_ID"
                 node_modules/.bin/netlify status
-                node_modules/.bin/netlify deploy --dir=build --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN
+                node_modules/.bin/netlify deploy --dir=build
                 '''
             }
         }
